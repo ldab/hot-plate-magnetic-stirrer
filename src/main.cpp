@@ -38,17 +38,19 @@ const char* wifi_password = s_wifi_password;
 const char* mqtt_server   = s_mqtt_server;
 const char* mqtt_user     = s_mqtt_user;
 const char* mqtt_pass     = s_mqtt_pass;
-uint16_t    mqtt_port     = s_mqtt_port;
+uint16_t mqtt_port        = s_mqtt_port;
 
 const char* sub_topic = "hot-plate/setpoint";
+const char* err_topic = "hot-plate/error";
 double temp           = NAN;
 float  temp_setpoint  = NAN;
+volatile bool allGood = true;
 
 // initialize the Thermocouple
 Adafruit_MAX31855 thermocouple(MAXCLK, MAXCS, MAXDO);
 
 // initialize the MQTT Client
-WiFiClient espClient;
+WiFiClient   espClient;
 PubSubClient client(espClient);
 
 // Timer instances
@@ -131,7 +133,11 @@ void read_temp()
   temp = thermocouple.readCelsius();
   if( isnan(temp) )
   {
-    Serial.println("Something wrong with thermocouple!");
+    char _errMsg[12];
+    //uint8_t _tcError = thermocouple.readError();
+    sprintf(_errMsg, "TC error #%i", thermocouple.readError());
+    client.publish(err_topic, _errMsg);
+    Serial.println(_errMsg);
   } 
   else 
   {
@@ -144,24 +150,24 @@ void setup()
 {
   Serial.begin(115200);
 
-  while (!Serial) delay(1); // wait for Serial on Leonardo/Zero, etc
-
-  Serial.println("MAX31855 test");
+  while (!Serial) delay(1); // wait for Serial
 
   // wait for MAX chip to stabilize
   delay(500);
+
+  setup_wifi();
+  client.setServer(mqtt_server, mqtt_port);
+  client.setCallback(callback);
 
   Serial.print("Initializing sensor...");
   if( !thermocouple.begin() )
 	{
     Serial.println("ERROR.");
-    while (1) delay(10);
-  }
-  Serial.println("DONE.");
+    client.publish(err_topic, "MAX31855 error");
 
-  setup_wifi();
-  client.setServer(mqtt_server, mqtt_port);
-  client.setCallback(callback);
+    allGood = false;
+    //while (1) delay(10);
+  }
 }
 
 void loop()
@@ -176,5 +182,4 @@ void loop()
     temp_reader.attach( TEMP_TIMEOUT, read_temp );
     client.loop();
   }
-
 }
