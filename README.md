@@ -10,33 +10,13 @@ Hot Plate Magnetic Stirrer with ESP8266, SSD, MAX31855 and thermocouple
 
 ## TODO
 
-- [ ] `returnError` Handler
-- [ ] Update Keywords
+- [ ] PID
+- [ ] Schematic
+- [ ] Pictures
 
-###  Current consumption of operating modes μA
+## VOID
 
-Operating mode (HZ) | Low Power | High Resolution
-----------------|-------------------|-----------
-0.781|1.543|
-1.563|1.635|
-3.125|1.922|
-6.25|2.488|
-12.5|3.431|
-25|5.784|
-50|9.821|
-100|18.15|
-200|34.72|
-400||156
-800||156
-1600||156
-
-## Interrupt Threshold
-
-Interrupt threshold sensitivity is compared to the top 12bits of the accelerometer 8g output value regardless of the resolution chosen:
-
-> This value can be anything from 1 to 4095
-
-* i.e 0.0039 (1/256) to 16 g (4095/256)
+"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
 
 ## Known Limitations
 
