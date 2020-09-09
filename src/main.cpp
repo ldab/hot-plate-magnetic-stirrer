@@ -150,20 +150,16 @@ void read_temp()
     Serial.print("C = ");
     Serial.println(temp);
 
-    char _payload[8];
+    char _payload[8];                     //ex "-120.00"
     sprintf(_payload, "%.02f", temp);
     client.publish(temp_topic, _payload);
 
     //SSR PWM
-    if((temp - temp_setpoint) < -30)
-      analogWrite(SSR, 1023);             //100%
-    else if((temp - temp_setpoint) < -15)
-      analogWrite(SSR, 1023/2);           //50%
-    else if((temp - temp_setpoint) < -3)
-      analogWrite(SSR, 1023/4);           //25%
+    int16_t delta_t = - (temp - temp_setpoint);
+    if(delta_t >= 0)
+      analogWrite(SSR, 25 * delta_t);     // 1023 / 40
     else
       analogWrite(SSR, 0);                //turn off
-
   }
 }
 
