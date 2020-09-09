@@ -3,4 +3,4 @@
 .piolibdeps
 .vscode
 
-lib/secrets/secrets.h
+include/secrets.h
